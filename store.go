@@ -2,7 +2,6 @@ package errors
 
 import (
 	"github.com/go-mysql-org/go-mysql/canal"
-	canalLog "github.com/siddontang/go/log"
 	"google.golang.org/grpc/codes"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -99,7 +98,6 @@ func getCanal(dsn string) *canal.Canal {
 	cfg.Password = params[2]
 	cfg.Addr = params[4]
 	cfg.Dump.ExecutionPath = ""
-	cfg.Logger.SetLevel(canalLog.LevelWarn)
 	c, err := canal.NewCanal(cfg)
 	if err != nil {
 		log.Panicf("%+v", err)
