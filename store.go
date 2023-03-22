@@ -2,11 +2,13 @@ package errors
 
 import (
 	"github.com/go-mysql-org/go-mysql/canal"
+	siddontang_log "github.com/siddontang/go-log/log"
 	"google.golang.org/grpc/codes"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
+	"os"
 	"regexp"
 	"time"
 )
@@ -98,6 +100,11 @@ func getCanal(dsn string) *canal.Canal {
 	cfg.Password = params[2]
 	cfg.Addr = params[4]
 	cfg.Dump.ExecutionPath = ""
+
+	h, _ := siddontang_log.NewStreamHandler(os.Stdout)
+	l := siddontang_log.NewDefault(h)
+	l.SetLevel(siddontang_log.LevelWarn)
+	cfg.Logger = l
 	c, err := canal.NewCanal(cfg)
 	if err != nil {
 		log.Panicf("%+v", err)
