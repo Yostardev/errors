@@ -2,26 +2,52 @@ package errors
 
 import (
 	"github.com/go-mysql-org/go-mysql/canal"
+	siddontang_log "github.com/siddontang/go-log/log"
 	"log"
+	"os"
 	"regexp"
 )
 
-func watch(dsn string) {
-	cc := getCanal(dsn)
+var cc *canal.Canal
 
-	cc.SetEventHandler(&handler{
+func initCanal(dsn string) {
+	params := regexp.MustCompile(
+		`^(?:(?P<user>.*?)(?::(?P<passwd>.*))?@)?` +
+			`(?:(?P<net>[^\(]*)(?:\((?P<addr>[^\)]*)\))?)?` +
+			`\/(?P<dbname>.*?)` +
+			`(?:\?(?P<params>[^\?]*))?$`).FindStringSubmatch(dsn)
+	cfg := canal.NewDefaultConfig()
+	cfg.User = params[1]
+	cfg.Password = params[2]
+	cfg.Addr = params[4]
+	cfg.Dump.ExecutionPath = ""
+
+	h, _ := siddontang_log.NewStreamHandler(os.Stdout)
+	l := siddontang_log.NewDefault(h)
+	l.SetLevel(siddontang_log.LevelWarn)
+	cfg.Logger = l
+	c, err := canal.NewCanal(cfg)
+	if err != nil {
+		log.Panicf("%+v", err)
+	}
+	c.SetEventHandler(&handler{
 		dsn: dsn,
 	})
 
+	cc = c
+}
+
+func watch() {
 	pos, err := cc.GetMasterPos()
 	if err != nil {
 		log.Panicf("%+v", err)
 	}
 
-	err = cc.RunFrom(pos)
-	if err != nil {
-		log.Panicf("%+v", err)
-	}
+	_ = cc.RunFrom(pos)
+}
+
+func closeWatch() {
+	cc.Close()
 }
 
 type handler struct {

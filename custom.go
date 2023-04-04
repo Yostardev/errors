@@ -13,11 +13,17 @@ import (
 
 var zapLogger *zap.Logger
 
-func InitErr(dsn string, log *zap.Logger) {
+func Init(dsn string, log *zap.Logger) {
 	initDB(dsn)
+	initCanal(dsn)
 	register()
 	zapLogger = log
-	go watch(dsn)
+	go watch()
+}
+
+func Close() {
+	closeDB()
+	closeWatch()
 }
 
 type dict struct {
