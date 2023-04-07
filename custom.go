@@ -12,13 +12,13 @@ import (
 	"sync"
 )
 
-var zapLogger *zap.Logger
+var zapLogger *zap.SugaredLogger
 
 func Init(dsn string, log *zap.Logger) {
 	initDB(dsn)
 	initCanal(dsn)
 	register()
-	zapLogger = log
+	zapLogger = log.Sugar()
 	go watch()
 }
 
@@ -162,9 +162,9 @@ func NewGrpcError(errName string, requestID string, err error) error {
 	}
 
 	if customError.httpStatus >= 500 {
-		zapLogger.Sugar().Errorf("request_id: %s \n%+v", requestID, err)
+		zapLogger.Errorf("[%s] %+v", requestID, err)
 	} else {
-		zapLogger.Sugar().Warnf("request_id: %s \n%v", requestID, err)
+		zapLogger.Warnf("[%s] %v", requestID, err)
 	}
 
 	return status.New(customError.GetGrpcStatus(), errName).Err()
@@ -179,9 +179,9 @@ func NewGrpcErrorWithCode(errCode int, requestID string, err error) error {
 	}
 
 	if customError.httpStatus >= 500 {
-		zapLogger.Sugar().Errorf("request_id: %s \n%+v", requestID, err)
+		zapLogger.Errorf("[%s] %+v", requestID, err)
 	} else {
-		zapLogger.Sugar().Warnf("request_id: %s \n%v", requestID, err)
+		zapLogger.Warnf("[%s] %v", requestID, err)
 	}
 
 	return status.New(customError.GetGrpcStatus(), customError.name).Err()

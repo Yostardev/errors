@@ -27,7 +27,7 @@ func initCanal(dsn string) {
 	cfg.Logger = l
 	c, err := canal.NewCanal(cfg)
 	if err != nil {
-		zapLogger.Sugar().Panicf("%+v", err)
+		zapLogger.Panicf("%+v", err)
 	}
 	c.SetEventHandler(&handler{
 		dsn: dsn,
@@ -39,7 +39,7 @@ func initCanal(dsn string) {
 func watch() {
 	pos, err := cc.GetMasterPos()
 	if err != nil {
-		zapLogger.Sugar().Panicf("%+v", err)
+		zapLogger.Panicf("%+v", err)
 	}
 
 	_ = cc.RunFrom(pos)
