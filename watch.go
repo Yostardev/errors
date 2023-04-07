@@ -3,7 +3,6 @@ package errors
 import (
 	"github.com/go-mysql-org/go-mysql/canal"
 	siddontang_log "github.com/siddontang/go-log/log"
-	"log"
 	"os"
 	"regexp"
 )
@@ -28,7 +27,7 @@ func initCanal(dsn string) {
 	cfg.Logger = l
 	c, err := canal.NewCanal(cfg)
 	if err != nil {
-		log.Panicf("%+v", err)
+		zapLogger.Sugar().Panicf("%+v", err)
 	}
 	c.SetEventHandler(&handler{
 		dsn: dsn,
@@ -40,7 +39,7 @@ func initCanal(dsn string) {
 func watch() {
 	pos, err := cc.GetMasterPos()
 	if err != nil {
-		log.Panicf("%+v", err)
+		zapLogger.Sugar().Panicf("%+v", err)
 	}
 
 	_ = cc.RunFrom(pos)

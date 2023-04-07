@@ -6,7 +6,6 @@ import (
 	"github.com/Yostardev/errors/store/ent/errorcode"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
-	"log"
 )
 
 var (
@@ -17,36 +16,36 @@ func initDB(dsn string) {
 	var err error
 	db, err = ent.Open("mysql", dsn)
 	if err != nil {
-		log.Panicf("failed opening connection to mysql: %v", err)
+		zapLogger.Sugar().Panicf("failed opening connection to mysql: %v", err)
 	}
 
 	if err = db.Schema.Create(context.Background()); err != nil {
-		log.Panicf("failed creating schema resources: %v", err)
+		zapLogger.Sugar().Panicf("failed creating schema resources: %v", err)
 	}
 
 	ctx := context.Background()
 
 	count, err := db.ErrorCode.Query().Where(errorcode.Name("Err_Unknown")).Count(ctx)
 	if err != nil {
-		log.Panicf("failed get resources: %v", err)
+		zapLogger.Sugar().Panicf("failed get resources: %v", err)
 	}
 
 	if count == 0 {
 		err = Insert(ctx, 50000, 2, "Err_Unknown", "未知错误")
 		if err != nil {
-			log.Panicf("failed creating resources: %v", err)
+			zapLogger.Sugar().Panicf("failed creating resources: %v", err)
 		}
 	}
 
 	count, err = db.ErrorCode.Query().Where(errorcode.Name("Err_GRPC_Connection")).Count(ctx)
 	if err != nil {
-		log.Panicf("failed get resources: %v", err)
+		zapLogger.Sugar().Panicf("failed get resources: %v", err)
 	}
 
 	if count == 0 {
 		err = Insert(ctx, 50001, 14, "Err_GRPC_Connection", "无法连接至Grpc服务")
 		if err != nil {
-			log.Panicf("failed creating resources: %v", err)
+			zapLogger.Sugar().Panicf("failed creating resources: %v", err)
 		}
 	}
 }
