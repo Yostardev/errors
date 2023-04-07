@@ -60,8 +60,8 @@ github.com/pingcap/log v0.0.0-20210625125904-98ed8e2eb1c7/go.mod h1:8AanEdAHATuR
 github.com/pingcap/log v1.1.0 h1:ELiPxACz7vdo1qAvvaWJg1NrYFoY6gqAh/+Uo6aXdD8=
 github.com/pingcap/log v1.1.0/go.mod h1:DWQW5jICDR7UJh4HtxXSM20Churx4CQL0fwL/SoOSA4=
 github.com/pingcap/tidb/parser v0.0.0-20221126021158-6b02a5d8ba7d/go.mod h1:ElJiub4lRy6UZDb+0JHDkGEdr6aOli+ykhyej7VCLoI=
-github.com/pingcap/tidb/parser v0.0.0-20230406133258-566c3f6f8eed h1:Ei/UTnVZzhH7WQrAGNzzXf0Qmh2XnUNiukykgUTbHWg=
-github.com/pingcap/tidb/parser v0.0.0-20230406133258-566c3f6f8eed/go.mod h1:IxXRBZ14Of1KkR3NXEwsoKrM8JbkOIHJHpwS/Ad8vPY=
+github.com/pingcap/tidb/parser v0.0.0-20230407050258-d6a5054b7239 h1:9J2uyaVGPbsyDFR49sa/Ec3B2bvn80vtXqZlRe/J+sc=
+github.com/pingcap/tidb/parser v0.0.0-20230407050258-d6a5054b7239/go.mod h1:IxXRBZ14Of1KkR3NXEwsoKrM8JbkOIHJHpwS/Ad8vPY=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

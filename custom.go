@@ -153,7 +153,7 @@ func (w *custom) GetMessage() string {
 	return w.message
 }
 
-func NewGrpcError(errName string, requestID string, err error) error {
+func NewGrpcError(errName string, err error) error {
 	errorDict.mux.RLock()
 	defer errorDict.mux.RUnlock()
 	var customError = errorDict.errorNameMap["Err_Unknown"]
@@ -162,15 +162,15 @@ func NewGrpcError(errName string, requestID string, err error) error {
 	}
 
 	if customError.httpStatus >= 500 {
-		zapLogger.Errorf("[%s] %+v", requestID, err)
+		zapLogger.Errorf("%+v", err)
 	} else {
-		zapLogger.Warnf("[%s] %v", requestID, err)
+		zapLogger.Warnf("%v", err)
 	}
 
 	return status.New(customError.GetGrpcStatus(), errName).Err()
 }
 
-func NewGrpcErrorWithCode(errCode int, requestID string, err error) error {
+func NewGrpcErrorWithCode(errCode int, err error) error {
 	errorDict.mux.RLock()
 	defer errorDict.mux.RUnlock()
 	var customError = errorDict.errorNameMap["Err_Unknown"]
@@ -179,9 +179,9 @@ func NewGrpcErrorWithCode(errCode int, requestID string, err error) error {
 	}
 
 	if customError.httpStatus >= 500 {
-		zapLogger.Errorf("[%s] %+v", requestID, err)
+		zapLogger.Errorf("%+v", err)
 	} else {
-		zapLogger.Warnf("[%s] %v", requestID, err)
+		zapLogger.Warnf("%v", err)
 	}
 
 	return status.New(customError.GetGrpcStatus(), customError.name).Err()
