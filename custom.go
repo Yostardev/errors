@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"context"
 	"fmt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -39,15 +40,15 @@ var errorDict = dict{
 }
 
 func register() {
-	list := getAllErrorCode()
+	list, _ := FetchAll(context.Background())
 	errorCodeMap := make(map[int]*custom, 0)
 	errorNameMap := make(map[string]*custom, 0)
 	for i := range list {
 		customError := &custom{
 			name:       list[i].Name,
 			errorCode:  list[i].ErrorCode,
-			grpcStatus: list[i].GrpcStatus,
-			httpStatus: HttpStatus(list[i].GrpcStatus),
+			grpcStatus: codes.Code(list[i].GrpcStatus),
+			httpStatus: HttpStatus(codes.Code(list[i].GrpcStatus)),
 			message:    list[i].Message,
 		}
 		errorCodeMap[list[i].ErrorCode] = customError
