@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,34 +17,6 @@ type ErrorCodeCreate struct {
 	config
 	mutation *ErrorCodeMutation
 	hooks    []Hook
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (ecc *ErrorCodeCreate) SetCreatedAt(t time.Time) *ErrorCodeCreate {
-	ecc.mutation.SetCreatedAt(t)
-	return ecc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ecc *ErrorCodeCreate) SetNillableCreatedAt(t *time.Time) *ErrorCodeCreate {
-	if t != nil {
-		ecc.SetCreatedAt(*t)
-	}
-	return ecc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (ecc *ErrorCodeCreate) SetUpdatedAt(t time.Time) *ErrorCodeCreate {
-	ecc.mutation.SetUpdatedAt(t)
-	return ecc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ecc *ErrorCodeCreate) SetNillableUpdatedAt(t *time.Time) *ErrorCodeCreate {
-	if t != nil {
-		ecc.SetUpdatedAt(*t)
-	}
-	return ecc
 }
 
 // SetErrorCode sets the "error_code" field.
@@ -72,12 +43,6 @@ func (ecc *ErrorCodeCreate) SetMessage(s string) *ErrorCodeCreate {
 	return ecc
 }
 
-// SetID sets the "id" field.
-func (ecc *ErrorCodeCreate) SetID(i int64) *ErrorCodeCreate {
-	ecc.mutation.SetID(i)
-	return ecc
-}
-
 // Mutation returns the ErrorCodeMutation object of the builder.
 func (ecc *ErrorCodeCreate) Mutation() *ErrorCodeMutation {
 	return ecc.mutation
@@ -85,7 +50,6 @@ func (ecc *ErrorCodeCreate) Mutation() *ErrorCodeMutation {
 
 // Save creates the ErrorCode in the database.
 func (ecc *ErrorCodeCreate) Save(ctx context.Context) (*ErrorCode, error) {
-	ecc.defaults()
 	return withHooks[*ErrorCode, ErrorCodeMutation](ctx, ecc.sqlSave, ecc.mutation, ecc.hooks)
 }
 
@@ -111,26 +75,8 @@ func (ecc *ErrorCodeCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (ecc *ErrorCodeCreate) defaults() {
-	if _, ok := ecc.mutation.CreatedAt(); !ok {
-		v := errorcode.DefaultCreatedAt()
-		ecc.mutation.SetCreatedAt(v)
-	}
-	if _, ok := ecc.mutation.UpdatedAt(); !ok {
-		v := errorcode.DefaultUpdatedAt()
-		ecc.mutation.SetUpdatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (ecc *ErrorCodeCreate) check() error {
-	if _, ok := ecc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ErrorCode.created_at"`)}
-	}
-	if _, ok := ecc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ErrorCode.updated_at"`)}
-	}
 	if _, ok := ecc.mutation.ErrorCode(); !ok {
 		return &ValidationError{Name: "error_code", err: errors.New(`ent: missing required field "ErrorCode.error_code"`)}
 	}
@@ -157,10 +103,8 @@ func (ecc *ErrorCodeCreate) sqlSave(ctx context.Context) (*ErrorCode, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	ecc.mutation.id = &_node.ID
 	ecc.mutation.done = true
 	return _node, nil
@@ -169,20 +113,8 @@ func (ecc *ErrorCodeCreate) sqlSave(ctx context.Context) (*ErrorCode, error) {
 func (ecc *ErrorCodeCreate) createSpec() (*ErrorCode, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ErrorCode{config: ecc.config}
-		_spec = sqlgraph.NewCreateSpec(errorcode.Table, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(errorcode.Table, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt))
 	)
-	if id, ok := ecc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
-	if value, ok := ecc.mutation.CreatedAt(); ok {
-		_spec.SetField(errorcode.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := ecc.mutation.UpdatedAt(); ok {
-		_spec.SetField(errorcode.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := ecc.mutation.ErrorCode(); ok {
 		_spec.SetField(errorcode.FieldErrorCode, field.TypeInt, value)
 		_node.ErrorCode = value
@@ -216,7 +148,6 @@ func (eccb *ErrorCodeCreateBulk) Save(ctx context.Context) ([]*ErrorCode, error)
 	for i := range eccb.builders {
 		func(i int, root context.Context) {
 			builder := eccb.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ErrorCodeMutation)
 				if !ok {
@@ -243,9 +174,9 @@ func (eccb *ErrorCodeCreateBulk) Save(ctx context.Context) ([]*ErrorCode, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

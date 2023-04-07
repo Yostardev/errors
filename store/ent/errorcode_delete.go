@@ -40,7 +40,7 @@ func (ecd *ErrorCodeDelete) ExecX(ctx context.Context) int {
 }
 
 func (ecd *ErrorCodeDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(errorcode.Table, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewDeleteSpec(errorcode.Table, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt))
 	if ps := ecd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

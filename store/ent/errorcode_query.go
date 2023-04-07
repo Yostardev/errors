@@ -81,8 +81,8 @@ func (ecq *ErrorCodeQuery) FirstX(ctx context.Context) *ErrorCode {
 
 // FirstID returns the first ErrorCode ID from the query.
 // Returns a *NotFoundError when no ErrorCode ID was found.
-func (ecq *ErrorCodeQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (ecq *ErrorCodeQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = ecq.Limit(1).IDs(setContextOp(ctx, ecq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (ecq *ErrorCodeQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ecq *ErrorCodeQuery) FirstIDX(ctx context.Context) int64 {
+func (ecq *ErrorCodeQuery) FirstIDX(ctx context.Context) int {
 	id, err := ecq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (ecq *ErrorCodeQuery) OnlyX(ctx context.Context) *ErrorCode {
 // OnlyID is like Only, but returns the only ErrorCode ID in the query.
 // Returns a *NotSingularError when more than one ErrorCode ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (ecq *ErrorCodeQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (ecq *ErrorCodeQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = ecq.Limit(2).IDs(setContextOp(ctx, ecq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (ecq *ErrorCodeQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ecq *ErrorCodeQuery) OnlyIDX(ctx context.Context) int64 {
+func (ecq *ErrorCodeQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ecq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (ecq *ErrorCodeQuery) AllX(ctx context.Context) []*ErrorCode {
 }
 
 // IDs executes the query and returns a list of ErrorCode IDs.
-func (ecq *ErrorCodeQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (ecq *ErrorCodeQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if ecq.ctx.Unique == nil && ecq.path != nil {
 		ecq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (ecq *ErrorCodeQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ecq *ErrorCodeQuery) IDsX(ctx context.Context) []int64 {
+func (ecq *ErrorCodeQuery) IDsX(ctx context.Context) []int {
 	ids, err := ecq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -261,12 +261,12 @@ func (ecq *ErrorCodeQuery) Clone() *ErrorCodeQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		ErrorCode int `json:"error_code,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ErrorCode.Query().
-//		GroupBy(errorcode.FieldCreatedAt).
+//		GroupBy(errorcode.FieldErrorCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ecq *ErrorCodeQuery) GroupBy(field string, fields ...string) *ErrorCodeGroupBy {
@@ -284,11 +284,11 @@ func (ecq *ErrorCodeQuery) GroupBy(field string, fields ...string) *ErrorCodeGro
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		ErrorCode int `json:"error_code,omitempty"`
 //	}
 //
 //	client.ErrorCode.Query().
-//		Select(errorcode.FieldCreatedAt).
+//		Select(errorcode.FieldErrorCode).
 //		Scan(ctx, &v)
 func (ecq *ErrorCodeQuery) Select(fields ...string) *ErrorCodeSelect {
 	ecq.ctx.Fields = append(ecq.ctx.Fields, fields...)
@@ -364,7 +364,7 @@ func (ecq *ErrorCodeQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (ecq *ErrorCodeQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt))
 	_spec.From = ecq.sql
 	if unique := ecq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

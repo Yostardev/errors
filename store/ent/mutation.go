@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -32,9 +31,7 @@ type ErrorCodeMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *int64
-	created_at     *time.Time
-	updated_at     *time.Time
+	id             *int
 	error_code     *int
 	adderror_code  *int
 	grpc_status    *uint32
@@ -67,7 +64,7 @@ func newErrorCodeMutation(c config, op Op, opts ...errorcodeOption) *ErrorCodeMu
 }
 
 // withErrorCodeID sets the ID field of the mutation.
-func withErrorCodeID(id int64) errorcodeOption {
+func withErrorCodeID(id int) errorcodeOption {
 	return func(m *ErrorCodeMutation) {
 		var (
 			err   error
@@ -117,15 +114,9 @@ func (m ErrorCodeMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of ErrorCode entities.
-func (m *ErrorCodeMutation) SetID(id int64) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ErrorCodeMutation) ID() (id int64, exists bool) {
+func (m *ErrorCodeMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -136,12 +127,12 @@ func (m *ErrorCodeMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ErrorCodeMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *ErrorCodeMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -149,78 +140,6 @@ func (m *ErrorCodeMutation) IDs(ctx context.Context) ([]int64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *ErrorCodeMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ErrorCodeMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ErrorCode entity.
-// If the ErrorCode object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ErrorCodeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ErrorCodeMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *ErrorCodeMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *ErrorCodeMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the ErrorCode entity.
-// If the ErrorCode object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ErrorCodeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *ErrorCodeMutation) ResetUpdatedAt() {
-	m.updated_at = nil
 }
 
 // SetErrorCode sets the "error_code" field.
@@ -441,13 +360,7 @@ func (m *ErrorCodeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ErrorCodeMutation) Fields() []string {
-	fields := make([]string, 0, 6)
-	if m.created_at != nil {
-		fields = append(fields, errorcode.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, errorcode.FieldUpdatedAt)
-	}
+	fields := make([]string, 0, 4)
 	if m.error_code != nil {
 		fields = append(fields, errorcode.FieldErrorCode)
 	}
@@ -468,10 +381,6 @@ func (m *ErrorCodeMutation) Fields() []string {
 // schema.
 func (m *ErrorCodeMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case errorcode.FieldCreatedAt:
-		return m.CreatedAt()
-	case errorcode.FieldUpdatedAt:
-		return m.UpdatedAt()
 	case errorcode.FieldErrorCode:
 		return m.ErrorCode()
 	case errorcode.FieldGrpcStatus:
@@ -489,10 +398,6 @@ func (m *ErrorCodeMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ErrorCodeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case errorcode.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case errorcode.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
 	case errorcode.FieldErrorCode:
 		return m.OldErrorCode(ctx)
 	case errorcode.FieldGrpcStatus:
@@ -510,20 +415,6 @@ func (m *ErrorCodeMutation) OldField(ctx context.Context, name string) (ent.Valu
 // type.
 func (m *ErrorCodeMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case errorcode.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case errorcode.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
 	case errorcode.FieldErrorCode:
 		v, ok := value.(int)
 		if !ok {
@@ -628,12 +519,6 @@ func (m *ErrorCodeMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ErrorCodeMutation) ResetField(name string) error {
 	switch name {
-	case errorcode.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case errorcode.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
 	case errorcode.FieldErrorCode:
 		m.ResetErrorCode()
 		return nil

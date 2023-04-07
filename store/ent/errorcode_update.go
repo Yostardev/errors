@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -25,12 +24,6 @@ type ErrorCodeUpdate struct {
 // Where appends a list predicates to the ErrorCodeUpdate builder.
 func (ecu *ErrorCodeUpdate) Where(ps ...predicate.ErrorCode) *ErrorCodeUpdate {
 	ecu.mutation.Where(ps...)
-	return ecu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (ecu *ErrorCodeUpdate) SetUpdatedAt(t time.Time) *ErrorCodeUpdate {
-	ecu.mutation.SetUpdatedAt(t)
 	return ecu
 }
 
@@ -79,7 +72,6 @@ func (ecu *ErrorCodeUpdate) Mutation() *ErrorCodeMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ecu *ErrorCodeUpdate) Save(ctx context.Context) (int, error) {
-	ecu.defaults()
 	return withHooks[int, ErrorCodeMutation](ctx, ecu.sqlSave, ecu.mutation, ecu.hooks)
 }
 
@@ -105,25 +97,14 @@ func (ecu *ErrorCodeUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (ecu *ErrorCodeUpdate) defaults() {
-	if _, ok := ecu.mutation.UpdatedAt(); !ok {
-		v := errorcode.UpdateDefaultUpdatedAt()
-		ecu.mutation.SetUpdatedAt(v)
-	}
-}
-
 func (ecu *ErrorCodeUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt))
 	if ps := ecu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ecu.mutation.UpdatedAt(); ok {
-		_spec.SetField(errorcode.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := ecu.mutation.ErrorCode(); ok {
 		_spec.SetField(errorcode.FieldErrorCode, field.TypeInt, value)
@@ -161,12 +142,6 @@ type ErrorCodeUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ErrorCodeMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (ecuo *ErrorCodeUpdateOne) SetUpdatedAt(t time.Time) *ErrorCodeUpdateOne {
-	ecuo.mutation.SetUpdatedAt(t)
-	return ecuo
 }
 
 // SetErrorCode sets the "error_code" field.
@@ -227,7 +202,6 @@ func (ecuo *ErrorCodeUpdateOne) Select(field string, fields ...string) *ErrorCod
 
 // Save executes the query and returns the updated ErrorCode entity.
 func (ecuo *ErrorCodeUpdateOne) Save(ctx context.Context) (*ErrorCode, error) {
-	ecuo.defaults()
 	return withHooks[*ErrorCode, ErrorCodeMutation](ctx, ecuo.sqlSave, ecuo.mutation, ecuo.hooks)
 }
 
@@ -253,16 +227,8 @@ func (ecuo *ErrorCodeUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (ecuo *ErrorCodeUpdateOne) defaults() {
-	if _, ok := ecuo.mutation.UpdatedAt(); !ok {
-		v := errorcode.UpdateDefaultUpdatedAt()
-		ecuo.mutation.SetUpdatedAt(v)
-	}
-}
-
 func (ecuo *ErrorCodeUpdateOne) sqlSave(ctx context.Context) (_node *ErrorCode, err error) {
-	_spec := sqlgraph.NewUpdateSpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(errorcode.Table, errorcode.Columns, sqlgraph.NewFieldSpec(errorcode.FieldID, field.TypeInt))
 	id, ok := ecuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ErrorCode.id" for update`)}
@@ -286,9 +252,6 @@ func (ecuo *ErrorCodeUpdateOne) sqlSave(ctx context.Context) (_node *ErrorCode, 
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ecuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(errorcode.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := ecuo.mutation.ErrorCode(); ok {
 		_spec.SetField(errorcode.FieldErrorCode, field.TypeInt, value)

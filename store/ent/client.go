@@ -233,7 +233,7 @@ func (c *ErrorCodeClient) UpdateOne(ec *ErrorCode) *ErrorCodeUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ErrorCodeClient) UpdateOneID(id int64) *ErrorCodeUpdateOne {
+func (c *ErrorCodeClient) UpdateOneID(id int) *ErrorCodeUpdateOne {
 	mutation := newErrorCodeMutation(c.config, OpUpdateOne, withErrorCodeID(id))
 	return &ErrorCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -250,7 +250,7 @@ func (c *ErrorCodeClient) DeleteOne(ec *ErrorCode) *ErrorCodeDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ErrorCodeClient) DeleteOneID(id int64) *ErrorCodeDeleteOne {
+func (c *ErrorCodeClient) DeleteOneID(id int) *ErrorCodeDeleteOne {
 	builder := c.Delete().Where(errorcode.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -267,12 +267,12 @@ func (c *ErrorCodeClient) Query() *ErrorCodeQuery {
 }
 
 // Get returns a ErrorCode entity by its id.
-func (c *ErrorCodeClient) Get(ctx context.Context, id int64) (*ErrorCode, error) {
+func (c *ErrorCodeClient) Get(ctx context.Context, id int) (*ErrorCode, error) {
 	return c.Query().Where(errorcode.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ErrorCodeClient) GetX(ctx context.Context, id int64) *ErrorCode {
+func (c *ErrorCodeClient) GetX(ctx context.Context, id int) *ErrorCode {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

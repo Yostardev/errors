@@ -10,9 +10,7 @@ import (
 var (
 	// ErrorCodesColumns holds the columns for the "error_codes" table.
 	ErrorCodesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "error_code", Type: field.TypeInt, Unique: true},
 		{Name: "grpc_status", Type: field.TypeUint32},
 		{Name: "name", Type: field.TypeString, Unique: true},

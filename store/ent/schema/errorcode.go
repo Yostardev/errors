@@ -24,10 +24,3 @@ func (ErrorCode) Fields() []ent.Field {
 func (ErrorCode) Edges() []ent.Edge {
 	return nil
 }
-
-// Mixin of the ErrorCode.
-func (ErrorCode) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		Meta{},
-	}
-}

@@ -5,7 +5,6 @@ package ent
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/Yostardev/errors/store/ent/errorcode"
@@ -15,11 +14,7 @@ import (
 type ErrorCode struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// 创建时间
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// 更新时间
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ID int `json:"id,omitempty"`
 	// 错误码
 	ErrorCode int `json:"error_code,omitempty"`
 	// Grpc状态
@@ -39,8 +34,6 @@ func (*ErrorCode) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case errorcode.FieldName, errorcode.FieldMessage:
 			values[i] = new(sql.NullString)
-		case errorcode.FieldCreatedAt, errorcode.FieldUpdatedAt:
-			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type ErrorCode", columns[i])
 		}
@@ -61,19 +54,7 @@ func (ec *ErrorCode) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ec.ID = int64(value.Int64)
-		case errorcode.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				ec.CreatedAt = value.Time
-			}
-		case errorcode.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				ec.UpdatedAt = value.Time
-			}
+			ec.ID = int(value.Int64)
 		case errorcode.FieldErrorCode:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field error_code", values[i])
@@ -126,12 +107,6 @@ func (ec *ErrorCode) String() string {
 	var builder strings.Builder
 	builder.WriteString("ErrorCode(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ec.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(ec.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(ec.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("error_code=")
 	builder.WriteString(fmt.Sprintf("%v", ec.ErrorCode))
 	builder.WriteString(", ")

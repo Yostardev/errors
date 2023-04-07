@@ -67,7 +67,7 @@ func Insert(ctx context.Context, errorCode int, grpcCode codes.Code, name, messa
 	return nil
 }
 
-func Update(ctx context.Context, id int64, errorCode int, grpcCode codes.Code, name, message string) error {
+func Update(ctx context.Context, id int, errorCode int, grpcCode codes.Code, name, message string) error {
 	if err := db.ErrorCode.Update().
 		Where(errorcode.ID(id)).
 		SetName(name).
@@ -80,7 +80,7 @@ func Update(ctx context.Context, id int64, errorCode int, grpcCode codes.Code, n
 	return nil
 }
 
-func Remove(ctx context.Context, id int64) error {
+func Remove(ctx context.Context, id int) error {
 	if _, err := db.ErrorCode.Delete().Where(errorcode.ID(id)).Exec(ctx); err != nil {
 		return err
 	}
