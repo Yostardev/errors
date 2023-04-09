@@ -18,7 +18,7 @@ import (
 type ErrorCodeQuery struct {
 	config
 	ctx        *QueryContext
-	order      []OrderFunc
+	order      []errorcode.Order
 	inters     []Interceptor
 	predicates []predicate.ErrorCode
 	// intermediate query (i.e. traversal path).
@@ -52,7 +52,7 @@ func (ecq *ErrorCodeQuery) Unique(unique bool) *ErrorCodeQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (ecq *ErrorCodeQuery) Order(o ...OrderFunc) *ErrorCodeQuery {
+func (ecq *ErrorCodeQuery) Order(o ...errorcode.Order) *ErrorCodeQuery {
 	ecq.order = append(ecq.order, o...)
 	return ecq
 }
@@ -246,7 +246,7 @@ func (ecq *ErrorCodeQuery) Clone() *ErrorCodeQuery {
 	return &ErrorCodeQuery{
 		config:     ecq.config,
 		ctx:        ecq.ctx.Clone(),
-		order:      append([]OrderFunc{}, ecq.order...),
+		order:      append([]errorcode.Order{}, ecq.order...),
 		inters:     append([]Interceptor{}, ecq.inters...),
 		predicates: append([]predicate.ErrorCode{}, ecq.predicates...),
 		// clone intermediate query.

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/Yostardev/errors/store/ent/errorcode"
 )
@@ -22,7 +23,8 @@ type ErrorCode struct {
 	// 错误名（唯一标识）
 	Name string `json:"name,omitempty"`
 	// 错误信息
-	Message string `json:"message,omitempty"`
+	Message      string `json:"message,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -35,7 +37,7 @@ func (*ErrorCode) scanValues(columns []string) ([]any, error) {
 		case errorcode.FieldName, errorcode.FieldMessage:
 			values[i] = new(sql.NullString)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type ErrorCode", columns[i])
+			values[i] = new(sql.UnknownType)
 		}
 	}
 	return values, nil
@@ -79,9 +81,17 @@ func (ec *ErrorCode) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ec.Message = value.String
 			}
+		default:
+			ec.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
+}
+
+// Value returns the ent.Value that was dynamically selected and assigned to the ErrorCode.
+// This includes values selected through modifiers, order, etc.
+func (ec *ErrorCode) Value(name string) (ent.Value, error) {
+	return ec.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this ErrorCode.
