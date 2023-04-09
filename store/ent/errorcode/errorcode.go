@@ -2,6 +2,10 @@
 
 package errorcode
 
+import (
+	"entgo.io/ent/dialect/sql"
+)
+
 const (
 	// Label holds the string label denoting the errorcode type in the database.
 	Label = "error_code"
@@ -36,4 +40,32 @@ func ValidColumn(column string) bool {
 		}
 	}
 	return false
+}
+
+// Order defines the ordering method for the ErrorCode queries.
+type Order func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) Order {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByErrorCode orders the results by the error_code field.
+func ByErrorCode(opts ...sql.OrderTermOption) Order {
+	return sql.OrderByField(FieldErrorCode, opts...).ToFunc()
+}
+
+// ByGrpcStatus orders the results by the grpc_status field.
+func ByGrpcStatus(opts ...sql.OrderTermOption) Order {
+	return sql.OrderByField(FieldGrpcStatus, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) Order {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByMessage orders the results by the message field.
+func ByMessage(opts ...sql.OrderTermOption) Order {
+	return sql.OrderByField(FieldMessage, opts...).ToFunc()
 }
