@@ -12,11 +12,17 @@ var (
 	db *ent.Client
 )
 
-func initDB(dsn string) {
+func initDB(dsn, logLevel string) {
 	var err error
-	db, err = ent.Open("mysql", dsn)
+	db, err = ent.Open("mysql", dsn, ent.Log(func(data ...any) {
+		zapLogger.Debug(data)
+	}))
 	if err != nil {
 		zapLogger.Panicf("failed opening connection to mysql: %v", err)
+	}
+
+	if logLevel == "debug" {
+		db = db.Debug()
 	}
 
 	if err = db.Schema.Create(context.Background()); err != nil {
@@ -51,7 +57,9 @@ func initDB(dsn string) {
 }
 
 func closeDB() {
-	_ = db.Close()
+	if err := db.Close(); err != nil {
+		zapLogger.Warn(err)
+	}
 }
 
 func Insert(ctx context.Context, errorCode int, grpcCode codes.Code, name, message string) error {

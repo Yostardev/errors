@@ -14,11 +14,11 @@ import (
 
 var zapLogger *zap.SugaredLogger
 
-func Init(dsn string, log *zap.Logger) {
-	initDB(dsn)
+func Init(dsn string, log *zap.Logger, logLevel string) {
+	zapLogger = log.Sugar()
+	initDB(dsn, logLevel)
 	initCanal(dsn)
 	register()
-	zapLogger = log.Sugar()
 	go watch()
 }
 
