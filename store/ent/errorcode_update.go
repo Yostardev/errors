@@ -72,7 +72,7 @@ func (ecu *ErrorCodeUpdate) Mutation() *ErrorCodeMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ecu *ErrorCodeUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks[int, ErrorCodeMutation](ctx, ecu.sqlSave, ecu.mutation, ecu.hooks)
+	return withHooks(ctx, ecu.sqlSave, ecu.mutation, ecu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
@@ -202,7 +202,7 @@ func (ecuo *ErrorCodeUpdateOne) Select(field string, fields ...string) *ErrorCod
 
 // Save executes the query and returns the updated ErrorCode entity.
 func (ecuo *ErrorCodeUpdateOne) Save(ctx context.Context) (*ErrorCode, error) {
-	return withHooks[*ErrorCode, ErrorCodeMutation](ctx, ecuo.sqlSave, ecuo.mutation, ecuo.hooks)
+	return withHooks(ctx, ecuo.sqlSave, ecuo.mutation, ecuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.

@@ -27,7 +27,7 @@ func (ecd *ErrorCodeDelete) Where(ps ...predicate.ErrorCode) *ErrorCodeDelete {
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (ecd *ErrorCodeDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks[int, ErrorCodeMutation](ctx, ecd.sqlExec, ecd.mutation, ecd.hooks)
+	return withHooks(ctx, ecd.sqlExec, ecd.mutation, ecd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.

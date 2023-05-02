@@ -50,7 +50,7 @@ func (ecc *ErrorCodeCreate) Mutation() *ErrorCodeMutation {
 
 // Save creates the ErrorCode in the database.
 func (ecc *ErrorCodeCreate) Save(ctx context.Context) (*ErrorCode, error) {
-	return withHooks[*ErrorCode, ErrorCodeMutation](ctx, ecc.sqlSave, ecc.mutation, ecc.hooks)
+	return withHooks(ctx, ecc.sqlSave, ecc.mutation, ecc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
