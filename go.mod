@@ -8,7 +8,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
 	go.uber.org/zap v1.24.0
-	google.golang.org/grpc v1.54.0
+	google.golang.org/grpc v1.56.3
 )
 
 require (
